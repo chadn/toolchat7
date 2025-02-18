@@ -1,0 +1,24 @@
+[project]
+name = "RAG-chat7"
+version = "0.1.0"
+description = "Streamlit chatbot with RAG and tool calling, uses custom APIs."
+keywords = ["chatbot", "streamlit", "together-ai", "langchain", "rag", "tool-calling"]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest",
+    "python-dotenv",
+    "streamlit",
+    "together",
+]
+authors = [
+  {name = "Chad Norwood", email = "chad@chadnorwood.com"},
+]
+maintainers = [
+  {name = "Chad Norwood", email = "chad@chadnorwood.com"},
+]
+[project.urls]
+Homepage = "https://rag-chat7.streamlit.app"
+Repository = "https://github.com/chadn/RAG-chat7.git"
+
+

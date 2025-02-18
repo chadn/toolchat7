@@ -9,12 +9,12 @@ Demo the code in this repo here: https://rag-chat7.streamlit.app/
 1. Clone the repository
 2. Create a virtual environment:
     ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    uv venv
+    source .venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
 3. Install dependencies:
     ```bash
-    pip install -e .
+    uv pip install -e .
     ```
 4. Copy `.env.template` to `.env` and add your Together API key:
     ```bash
@@ -24,18 +24,9 @@ Demo the code in this repo here: https://rag-chat7.streamlit.app/
 
 ## Running the Application
 
-You can run the application in two ways:
-
-1. Using the entry point script:
-
-    ```bash
-    python run_app.py
-    ```
-
-2. Using Streamlit directly:
-    ```bash
-    streamlit run src/streamlit_app.py
-    ```
+```bash
+streamlit run src/streamlit_app.py
+```
 
 ## Running Tests
 
