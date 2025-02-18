@@ -2,7 +2,7 @@
 
 A Streamlit-based chatbot application that uses Together AI's language models.
 
-Demo the code in this repo here: https://chatbot7.streamlit.app/
+Demo the code in this repo here: https://rag-chat7.streamlit.app/
 
 ## Setup
 
@@ -57,19 +57,12 @@ pytest tests/ -m integration
 chatbot7/
 ├── .devcontainer/
 │   └── devcontainer.json          # Configuration for development container
-├── .github/
-│   └── CODEOWNERS                 # GitHub code owners configuration
 ├── src/
-│   ├── __init__.py                # Empty init file for src package
+│   ├── streamlit_app.py           # Main Streamlit application
 │   ├── services/
-│   │   ├── __init__.py            # Empty init file for services package
 │   │   ├── chat_history.py        # Chat history management
 │   │   └── chat_model.py          # Together AI chat model integration
-│   ├── streamlit_app.py           # Main Streamlit application
-│   └── utils/
-│       └── __init__.py            # Empty init file for utils package
 ├── tests/
-│   ├── __init__.py                # Empty init file for tests package
 │   ├── test_chat_history.py       # Unit tests for chat history management
 │   └── test_chat_model.py         # Unit tests for chat model integration
 ├── .env.template                  # Template for environment variables
@@ -104,15 +97,5 @@ The application is structured into several key components:
 
 -   `TOGETHER_API_KEY`: Your Together AI API key
 -   `DEBUG_PRINT`: Enable/disable debug printing (True/False)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests
-5. Submit a pull request
-
-## License
 
 [Apache License 2.0](LICENSE)
