@@ -2,7 +2,7 @@
 
 A Streamlit-based chatbot application that uses Together AI's language models.
 
-Demo the code in this repo here: https://rag-chat7.streamlit.app/
+Demo the code in this repo here: https://toolchat7.streamlit.app/
 
 ## Setup
 
