@@ -1,6 +1,6 @@
-# 💬 Chatbot 7
+# 💬 Tool Chat 7
 
-A Streamlit-based chatbot application that uses Together AI's language models.
+A Streamlit-based chatbot application that uses Together AI's language models and supports tool calling.
 
 Demo the code in this repo here: https://toolchat7.streamlit.app/
 
@@ -45,7 +45,7 @@ pytest tests/ -m integration
 ## Project Structure
 
 ```
-chatbot7/
+/
 ├── .devcontainer/
 │   └── devcontainer.json          # Configuration for development container
 ├── src/

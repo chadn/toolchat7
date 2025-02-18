@@ -24,10 +24,9 @@ def init_session_state() -> None:
     dbg(f"DEBUG_PRINT set to {st.session_state.dbg_print} session state initialized")
 
 def setup_page() -> None:
-    st.title("💬 Chatbot")
+    st.title("💬 Tool Chat 7 ")
     st.write(
-        "This is a simple chatbot that uses Together's chat models to generate responses. "
-        "To use this app, you need to provide a Together API key."
+        "This is a simple chatbot that uses custom tools, or APIs."
     )
 
 def get_api_key() -> Optional[str]:
@@ -74,7 +73,7 @@ def download_messages() -> None:
     #
     dbg("Initializing download_messages()")        
     now = datetime.now()
-    fn = f"chatbot7_messages_{now.strftime('%Y-%m-%d')}_{int(now.timestamp())}.json"
+    fn = f"toolchat7_messages_{now.strftime('%Y-%m-%d')}_{int(now.timestamp())}.json"
     messages_json = st.session_state.chat_history.export_json()
     dbg(f"messages_json now {len(messages_json)} bytes, {len(st.session_state.chat_history.messages)} messages")
     st.markdown("Save chat messages by downloading.  \nClick twice to get latest (bug).")
