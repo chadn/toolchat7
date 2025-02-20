@@ -44,31 +44,33 @@ pytest tests/ -m integration
 
 ## Project Structure
 
+Also see [Architecture.md](docs/Architecture.md) and [TODO.md](docs/TODO.md)
+
 ```
 /
 ├── .devcontainer/
-│   └── devcontainer.json        # Configuration for development container
+│   └── devcontainer.json    # Configuration for development container
 ├── docs/
-│   ├── [Architecture.md](docs/Architecture.md)         # System architecture documentation
-│   └── [TODO.md](docs/TODO.md)                # Project tasks and plans
+│   ├── Architecture.md       # System architecture documentation
+│   └── TODO.md               # Project tasks and plans
 ├── src/
-│   ├── streamlit_app.py         # Main Streamlit application
+│   ├── streamlit_app.py      # Main Streamlit application
 │   ├── services/
-│   │   ├── chat_history.py      # Chat history management
-│   │   └── chat_model.py        # Together AI chat model integration
+│   │   ├── chat_history.py   # Chat history management
+│   │   └── chat_model.py     # Together AI chat model integration
 │   └── utils/
 ├── tests/
-│   ├── test_chat_history.py     # Unit tests for chat history management
-│   └── test_chat_model.py       # Unit tests for chat model integration
+│   ├── test_chat_history.py  # Unit tests for chat history management
+│   └── test_chat_model.py    # Unit tests for chat model integration
 │
-├── .env                         # Environment variables configuration
-├── .env.template                # Template for environment variables
-├── .gitignore                   # Git ignore file
-├── .python-version              # Python version specification
-├── pyproject.toml               # Project configuration and dependencies
-├── uv.lock                      # UV package manager dependencies lock file (by uv lock)
-├── LICENSE                      # License file (Apache 2.0)
-├── README.md                    # Project documentation
+├── .env                      # Environment variables configuration
+├── .env.template             # Template for environment variables
+├── .gitignore                # Git ignore file
+├── .python-version           # Python version specification
+├── pyproject.toml            # Project configuration and dependencies
+├── uv.lock                   # UV package manager dependencies lock file (by uv lock)
+├── LICENSE                   # License file (Apache 2.0)
+├── README.md                 # Project documentation
 ```
 
 ## Features
