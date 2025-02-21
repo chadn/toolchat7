@@ -1,13 +1,31 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 import json
+from langchain_community.chat_message_histories import StreamlitChatMessageHistory
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage
 
-class ChatHistoryManager:
+class ChatHistoryManager(StreamlitChatMessageHistory):
     def __init__(self):
-        self.messages: List[Dict[str, str]] = []
-        
+        super().__init__(key="langchain_messages")
+        print(f"CHAD: ChatHistoryManager init complete.")
+    
+    def add_human_message(self, content: str) -> None:
+        self.add_message(HumanMessage(content=content))
+
+    def add_ai_message(self, content: str | AIMessage) -> None:
+        if type(content) == AIMessage:
+            self.add_message(content)
+        elif type(content) == str:
+            self.add_message(AIMessage(content=content))
+        else:
+            raise ValueError(f"add_ai_message() Invalid content type: {type(content)}")
+
+    def add_tool_message(self, toolmsg: ToolMessage) -> None:
+        self.add_message(toolmsg)
+
     def append_message(self, message: Dict[str, str]) -> None:
         """Append a message to the chat history.
+        DEPRECATED: use add_human_message or add_ai_message instead
         
         Args:
             message: Dict containing 'role' and 'content' keys
@@ -28,11 +46,13 @@ class ChatHistoryManager:
         if "dt" not in message:
             message["dt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z")
         
-        self.messages.append(message)
+        self.append(message)
         
     def export_json(self) -> str:
         """Export chat history as JSON string."""
-        return json.dumps(self.messages)
+        # TODO fix this
+        #return json.dumps(self.messages)
+        return '[]'
         
     def import_json(self, json_str: str) -> None:
         """Import chat history from JSON string.
@@ -48,7 +68,14 @@ class ChatHistoryManager:
             raise ValueError("JSON must contain a list of messages")
             
         for msg in messages:
-            if not isinstance(msg, dict) or not all(key in msg for key in ['role', 'content']):
-                raise ValueError("Each message must be a dictionary with 'role' and 'content' keys")
-                
+            if not isinstance(msg, dict) or not all(key in msg for key in ['type', 'content']):
+                raise ValueError("Each message must be a dictionary with at least 'type' and 'content' keys")
+            
+        self.clear()
+        for msg in messages:
+            self.add_message(BaseMessage(
+                content=msg["content"],
+                type=msg["type"],
+            ))
+
         self.messages = messages 

@@ -7,9 +7,15 @@ from datetime import datetime
 from io import StringIO
 from typing import Optional
 from dotenv import load_dotenv
+import traceback
 
 from services.chat_model import ChatModelService
 from services.chat_history import ChatHistoryManager
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langchain.globals import set_verbose, set_debug
+
+
+
 
 def dbg(msg):
     if st.session_state.dbg_print:
@@ -21,13 +27,22 @@ def init_session_state() -> None:
         st.session_state.chat_history = ChatHistoryManager()
     if "dbg_print" not in st.session_state:
         st.session_state.dbg_print = os.getenv('DEBUG_PRINT')
+    # Setting the verbose flag will print out inputs and outputs in a slightly more readable format 
+    # and will skip logging certain raw outputs (like the token usage stats for an LLM call) 
+    # so that you can focus on application logic.
+    set_verbose(os.getenv('LANGCHAIN_VERBOSE', default=False))
+    # Setting the global debug flag will cause all LangChain components with callback support 
+    # (chains, models, agents, tools, retrievers) to print the inputs they receive and outputs 
+    # they generate. This is the most verbose setting and will fully log raw inputs and outputs.
+    set_debug(os.getenv('LANGCHAIN_DEBUG', default=False))
+
+
     dbg(f"DEBUG_PRINT set to {st.session_state.dbg_print} session state initialized")
 
 def setup_page() -> None:
     st.title("💬 Tool Chat 7 ")
-    st.write(
-        "This is a simple chatbot that uses custom tools, or APIs."
-    )
+    st.write("This is a simple chatbot that uses custom tools, or APIs.")
+    st.write("What is the weather in SF?")
 
 def get_api_key() -> Optional[str]:
     """Get API key from environment or user input.
@@ -114,6 +129,13 @@ def upload_messages() -> None:
             st.error("Error parsing JSON file. Please ensure the file is in the correct format.", icon="🚨")
             st.exception(e)
 
+def render_message(msg: BaseMessage):
+    with st.chat_message(msg.type):
+        #st.write(msg.content)
+        st.markdown(msg.content)
+        #if isinstance(msg, TimeMessage):
+        #    st.caption(f"{msg.time.strftime(readable_time_format)}")
+
 def setup_sidebar() -> None:
     """Configure and display sidebar elements."""
     with st.sidebar:
@@ -122,9 +144,8 @@ def setup_sidebar() -> None:
 
 def display_chat_history() -> None:
     """Display all messages in the chat history."""
-    for message in st.session_state.chat_history.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    for msg in st.session_state.chat_history.messages:
+        render_message(msg)
 
 def handle_user_input(chat_model: ChatModelService) -> None:
     """Handle user input and generate responses.
@@ -132,27 +153,23 @@ def handle_user_input(chat_model: ChatModelService) -> None:
     Args:
         chat_model: Initialized chat model service
     """
+
+
     if prompt := st.chat_input("What can I answer for you today?"):
         # Add user message
-        message = {"role": "user", "content": prompt}
-        st.session_state.chat_history.append_message(message)
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        
+        st.session_state.chat_history.add_human_message(prompt)
+        render_message(st.session_state.chat_history.messages[-1])        
         # Generate and display response
         try:
-            response = chat_model.generate_response(
-                st.session_state.chat_history.messages
-            )
-            with st.chat_message("assistant"):
-                st.markdown(response)
-            
-            st.session_state.chat_history.append_message({
-                "role": "assistant",
-                "content": response
-            })
+            st.session_state.chat_model.generate_response_langchain()
+            render_message(st.session_state.chat_history.messages[-1])
         except Exception as e:
+            print(f"CHAD: generate_response_langchain failed. {type(e)} Exception:\n{e}\n{repr(e)}\n")
+            print(f"CHAD: generate_response_langchain traceback:")
+            print(traceback.format_exc())
+            print("\n\n")
             st.error(f"Error generating response: {str(e)}", icon="🚨")
+
 
 def main() -> None:
     """Main application function."""
@@ -164,10 +181,17 @@ def main() -> None:
     if "api_key" not in st.session_state:
         st.session_state.api_key = get_api_key()
     if st.session_state.api_key:
-        if "chat_model" not in st.session_state:
-            st.session_state.chat_model = get_chat_model(st.session_state.api_key)
-        display_chat_history()
-        handle_user_input(st.session_state.chat_model)
+        try:
+            if "chat_model" not in st.session_state:
+                st.session_state.chat_model = get_chat_model(st.session_state.api_key)
+                st.session_state.chat_model.set_chat_history(st.session_state.chat_history)
+            display_chat_history()
+            handle_user_input(st.session_state.chat_model)
+        except Exception as e:
+            print(f"CHAD: main() {type(e)} Exception:\n{e}\n{repr(e)}\n")
+            print(f"CHAD: main() traceback:")
+            print(traceback.format_exc())
+            print("\n\n")
 
 if __name__ == "__main__":
     main()
