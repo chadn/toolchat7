@@ -144,7 +144,7 @@ def setup_sidebar() -> None:
 
 def display_chat_history() -> None:
     """Display all messages in the chat history."""
-    for msg in st.session_state.chat_history.messages:
+    for msg in st.session_state.chat_history.get_just_ai_human_message():
         render_message(msg)
 
 def handle_user_input(chat_model: ChatModelService) -> None:

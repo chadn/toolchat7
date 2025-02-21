@@ -9,9 +9,9 @@ import pprint
 def get_weather(location: str):
     """Call to get the current weather."""
     if location.lower() in ["sf", "san francisco"]:
-        return "It's 60 degrees and foggy."
+        return f"It's 60 degrees and foggy in {location}."
     else:
-        return "It's 90 degrees and sunny."
+        return f"It's 90 degrees and sunny in {location}."
 
 
 @tool

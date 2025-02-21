@@ -28,6 +28,12 @@ Demo the code in this repo here: https://toolchat7.streamlit.app/
 streamlit run src/streamlit_app.py
 ```
 
+You can add timestamps and log to a file when debugging like this:
+
+```bash
+streamlit run src/streamlit_app.py 2>&1 |ts |tee -a src/streamlit_app.py.log
+```
+
 ## Running Tests
 
 Run all tests:

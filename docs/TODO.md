@@ -7,5 +7,10 @@
 -   :white_check_mark: create some pytest unit tests for functions, maybe for chat model
 -   :white_check_mark: use `uv` and `pyproject.toml`
 -   use `ruff` for linting and formatting.
--   use langchain instead of Together AI
+-   :white_check_mark: use langchain instead of Together AI
+-   use langchain and tools to call my functions
+    -   :white_check_mark: use langchain to interface with Together AI via `ChatTogether`
+    -   :white_check_mark: use langchain to register `@tool` functions via `bind_tools`
+    -   :white_check_mark: use langgraph's `ToolNode` to execute tool functions
+    -   :heavy_exclamation_mark:see evidence that AI is receiving and understanding tool responses
 -   use https://github.com/open-webui/open-webui instead of streamlit

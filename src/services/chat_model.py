@@ -7,7 +7,7 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from services.tool_manager import ToolManager   
 from services.chat_history import ChatHistoryManager
 from langchain.chat_models import init_chat_model
-
+from utils import warn, error, success, dbg_important
 
 
 TOGETHERAI_MIXTRAL_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
@@ -21,20 +21,21 @@ class ChatModelService:
         # self.chat_llm = self.llama_model()
         self._mixtral_model = None
         self._llama_model = None
-        self.chat_llm = self.mixtral_model()
+        self.chat_llm_no_tools = self.mixtral_model()
         self.tool_manager = ToolManager()
-        print(f"CHAD: ChatModelService self.chat_llm before bind_tools:")
-        pprint.pp(self.chat_llm)
+        dbg_important(f"CHAD: ChatModelService self.chat_llm_no_tools before bind_tools:")
+        pprint.pp(self.chat_llm_no_tools)
         try:
-            self.chat_llm = self.chat_llm.bind_tools(self.tool_manager.working_tools)
-            print(f"CHAD: ChatModelService bind_tools() SUCCESS! tools={self.tool_manager.working_tools}\n")
+            self.chat_llm = self.chat_llm_no_tools.bind_tools(self.tool_manager.working_tools)
+            success(f"CHAD: ChatModelService bind_tools() SUCCESS! tools={self.tool_manager.working_tools}\n")
         except Exception as e:
-            print(f"CHAD: ChatModelService bind_tools() failed. {type(e)} Exception:\n{e}\n{repr(e)}\n")
-            print(f"CHAD: ChatModelService self.chat_llm:")
-            pprint.pp(self.chat_llm)
-            print(f"CHAD: ChatModelService traceback:")
+            error(f"CHAD: ChatModelService bind_tools() failed", f"{type(e)} Exception:\n{e}\n{repr(e)}\n")
+            warn(f"CHAD: ChatModelService self.chat_llm_no_tools:")
+            pprint.pp(self.chat_llm_no_tools)
+            warn(f"CHAD: ChatModelService traceback:")
             print(traceback.format_exc())
             print("\n\n")
+            raise e
 
 
     def mixtral_model(self) -> ChatTogether:
@@ -65,7 +66,10 @@ class ChatModelService:
 
     def generate_response_langchain(self, content: str = None) -> str:
         """Generate a chat response using the Langchain API.
-        uses the chat_history and the chat_llm to generate a response, updating the chat_history with the response.
+        uses the chat_history and the chat_llm to generate a response.
+        
+        Updates the chat_history with the response, maybe multiple times.
+
         Args:
             content: Content of the message to generate a response for. If None, the last message in the chat_history is used.
         Returns:
@@ -73,33 +77,38 @@ class ChatModelService:
         """
         if content:
             self.chat_history.add_human_message(content)
-        max_iterations = 10
-        while max_iterations > 0:
-            max_iterations -= 1
+        # this is how many turns we allow the AI to call tools
+        max_tool_turns = 5 
+        while max_tool_turns > 0:
+            max_tool_turns -= 1
             # response_ai_msg is a AI Message object, the response from AI to human.
-            print(f"\nCHAD: generate_response_langchain() chat_history.messages length={len(self.chat_history.messages)} ")
+            dbg_important(f"\nCHAD: generate_response_langchain chat_history.messages length={len(self.chat_history.messages)} ")
             response_ai_msg = self.chat_llm.invoke(self.chat_history.messages)
             tool_responses = []
             try:
-                print("\nCHAD: generate_response_langchain() response_ai_msg: ")
+                dbg_important("\nCHAD: generate_response_langchain() response_ai_msg: ")
                 pprint.pp(response_ai_msg)
                 tool_responses = self.tool_manager.execute_tool_calls(response_ai_msg)
             except Exception as e:
-                print(f"\nCHAD: execute_tool_calls failed.\n{e}\n\n")
+                error(f"\nCHAD: execute_tool_calls failed.\n{e}\n\n")
                 raise e
             if (tool_responses and len(tool_responses) > 0):
+                # add the AI message with tool_calls to the chat history before adding the response tool messages
+                self.chat_history.add_ai_message(response_ai_msg)
                 for toolmsg in tool_responses:
                     self.chat_history.add_tool_message(toolmsg)
             else:
-                max_iterations = 0
+                #max_tool_turns = 0
+                break
 
         self.chat_history.add_ai_message(response_ai_msg)
 
         try:
-            print("CHAD: generate_response_langchain() chat_history.messages: ")
+            dbg_important("CHAD: generate_response_langchain chat_history.messages: ")
             pprint.pp(self.chat_history.messages)
+            print("\n", flush=True)
         except:
-            print("CHAD: generate_response_langchain() printing chat_history.messages failed")
+            dbg_important("CHAD: generate_response_langchain() printing chat_history.messages failed")
 
         return response_ai_msg
 

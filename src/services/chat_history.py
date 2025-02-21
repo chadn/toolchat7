@@ -47,7 +47,25 @@ class ChatHistoryManager(StreamlitChatMessageHistory):
             message["dt"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z")
         
         self.append(message)
-        
+
+
+    def get_just_ai_human_message(self) -> List[BaseMessage]:
+        """
+        Get all  AI or Human messages from the chat history.
+        Skip tool messages and any messages without content.
+
+        Returns:
+            List[BaseMessage]: A list of BaseMessage objects
+        """
+        messages = []
+        for msg in self.messages:
+            if msg.type in ["ai", "human"]:
+                if msg.content:
+                    messages.append(BaseMessage(content=msg.content, type=msg.type))
+        print(f"CHAD: get_just_ai_human_message() returning {len(messages)} of {len(self.messages)} messages")
+        return messages
+
+    
     def export_json(self) -> str:
         """Export chat history as JSON string."""
         # TODO fix this
