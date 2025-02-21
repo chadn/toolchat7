@@ -21,10 +21,10 @@ LLAMA3_STOPS = ["<|eot_id|>"]
 class ChatModelService:
     def __init__(self, api_key: str):
         self.api_key = api_key
-        # self.chat_llm = self.llama_model()
         self._mixtral_model = None
         self._llama_model = None
-        self.chat_llm_no_tools = self.mixtral_model()
+        #self.chat_llm_no_tools = self.mixtral_model()
+        self.chat_llm_no_tools = self.llama_model()
         self.tool_manager = ToolManager()
         dbg_important(f"CHAD: ChatModelService self.chat_llm_no_tools before bind_tools:")
         pprint.pp(self.chat_llm_no_tools)
@@ -50,7 +50,7 @@ class ChatModelService:
                 stop=MIXTRAL_STOPS,
                 top_p=0.9,
                 temperature=1.0,
-                callbacks=[MyCustomHandler()]
+                callbacks=[MyCustomHandler()],
             )
         return self._mixtral_model
 
@@ -61,7 +61,8 @@ class ChatModelService:
                 together_api_key=self.api_key,
                 max_tokens=1024,
                 stop=LLAMA3_STOPS,
-                temperature=0
+                temperature=0,
+                callbacks=[MyCustomHandler()],
             )
         return self._llama_model
 

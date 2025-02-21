@@ -4,6 +4,16 @@ A Streamlit-based chatbot application that uses Together AI's language models an
 
 Demo the code in this repo here: https://toolchat7.streamlit.app/
 
+## Features
+
+-   Chat interface with Together AI models
+-   Chat history management
+-   Export/Import chat history as JSON
+-   Configurable model parameters
+-   Debug print option
+
+Also see [Architecture.md](docs/Architecture.md), [TODO.md](docs/TODO.md), and [Bugs.md](docs/Bugs.md)
+
 ## Setup
 
 1. Clone the repository
@@ -50,8 +60,6 @@ pytest tests/ -m integration
 
 ## Project Structure
 
-Also see [Architecture.md](docs/Architecture.md) and [TODO.md](docs/TODO.md)
-
 ```
 /
 ├── .devcontainer/
@@ -78,14 +86,6 @@ Also see [Architecture.md](docs/Architecture.md) and [TODO.md](docs/TODO.md)
 ├── LICENSE                   # License file (Apache 2.0)
 ├── README.md                 # Project documentation
 ```
-
-## Features
-
--   Chat interface with Together AI models
--   Chat history management
--   Export/Import chat history as JSON
--   Configurable model parameters
--   Debug print option
 
 ## Development
 

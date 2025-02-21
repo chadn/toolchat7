@@ -12,5 +12,9 @@
     -   :white_check_mark: use langchain to interface with Together AI via `ChatTogether`
     -   :white_check_mark: use langchain to register `@tool` functions via `bind_tools`
     -   :white_check_mark: use langgraph's `ToolNode` to execute tool functions
+    -   :heavy_exclamation_mark: :heavy_exclamation_mark: see exact data sent over the internet to `api.together.xyz`
     -   :heavy_exclamation_mark: see evidence that AI is receiving and understanding tool responses. More in [Bugs.md](Bugs.md)
+        -   :white_check_mark: Try using llama instead of mixtral. NO DIFFERENCE.
+        -   look for daniel's hack to extend a langchain class
+
 -   use https://github.com/open-webui/open-webui instead of streamlit
