@@ -1,12 +1,15 @@
-from typing import ClassVar, Union, Optional, List, Dict
+from typing import ClassVar, Union, Optional, List, Dict, Any
+from uuid import UUID
 import pprint
 import traceback
 from pydantic import BaseModel
 from langchain_together import ChatTogether
+from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import BaseMessage
+from langchain.chat_models import init_chat_model
 from services.tool_manager import ToolManager   
 from services.chat_history import ChatHistoryManager
-from langchain.chat_models import init_chat_model
 from utils import warn, error, success, dbg_important
 
 
@@ -47,6 +50,7 @@ class ChatModelService:
                 stop=MIXTRAL_STOPS,
                 top_p=0.9,
                 temperature=1.0,
+                callbacks=[MyCustomHandler()]
             )
         return self._mixtral_model
 
@@ -77,12 +81,14 @@ class ChatModelService:
         """
         if content:
             self.chat_history.add_human_message(content)
-        # this is how many turns we allow the AI to call tools
-        max_tool_turns = 5 
-        while max_tool_turns > 0:
-            max_tool_turns -= 1
+
+        # this is how many turns we allow the AI to call tools.  3 for now while debugging, increase to 5 or 10 later.
+        max_tool_turns = 3
+        remaining_tool_turns = max_tool_turns
+        while remaining_tool_turns > 0:
+            remaining_tool_turns -= 1
             # response_ai_msg is a AI Message object, the response from AI to human.
-            dbg_important(f"\nCHAD: generate_response_langchain chat_history.messages length={len(self.chat_history.messages)} ")
+            dbg_important(f"\nCHAD: generate_response_langchain remaining_tool_turns={remaining_tool_turns} chat_history.messages length={len(self.chat_history.messages)} ")
             response_ai_msg = self.chat_llm.invoke(self.chat_history.messages)
             tool_responses = []
             try:
@@ -104,7 +110,7 @@ class ChatModelService:
         self.chat_history.add_ai_message(response_ai_msg)
 
         try:
-            dbg_important("CHAD: generate_response_langchain chat_history.messages: ")
+            dbg_important(f"CHAD: generate_response_langchain {len(self.chat_history.messages)} chat_history.messages: ")
             pprint.pp(self.chat_history.messages)
             print("\n", flush=True)
         except:
@@ -141,4 +147,27 @@ class ChatModelService:
         return response.choices[0].message.content 
     
 
-#TODO use langchain https://python.langchain.com/v0.1/docs/integrations/chat/together/
+
+# available callback functions listed here:
+# https://python.langchain.com/api_reference/core/callbacks/langchain_core.callbacks.base.BaseCallbackHandler.html
+# #langchain-core-callbacks-base-basecallbackhandler
+class MyCustomHandler(BaseCallbackHandler):
+
+    def on_llm_new_token(self, token: str, **kwargs) -> None:
+        print(f"My custom handler, token: {token}")
+
+    def on_llm_start(self, serialized: dict[str, Any], prompts: list[str], *, run_id: UUID, 
+                     parent_run_id: UUID | None = None, tags: list[str] | None = None, 
+                     metadata: dict[str, Any] | None = None, **kwargs: Any) -> None:
+        # ATTENTION: This method is called for non-chat models (regular LLMs). 
+        # If you’re implementing a handler for a chat model, you should use on_chat_model_start instead.
+        dbg_important(f"CHAD: on_llm_start")
+
+    def on_chat_model_start(self, serialized: dict[str, Any], messages: list[list[BaseMessage]], *, run_id: UUID, 
+                           parent_run_id: UUID | None = None, tags: list[str] | None = None, 
+                           metadata: dict[str, Any] | None = None, **kwargs: Any) -> None:
+        # ATTENTION: This method is called for chat models. 
+        # If you’re implementing a handler for a non-chat model, you should use on_llm_start instead.
+        dbg_important(f"CHAD: on_chat_model_start {len(messages)}.{len(messages[0])} messages: {messages}")
+
+
