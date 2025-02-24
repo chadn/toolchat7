@@ -2,7 +2,7 @@
 
 Noting bugs here that currently exist in code.
 
-## tool_results_pass_to_model Working
+## tool_results_pass_to_model Working Llama-3.1-405B
 
 UPDATE: Regarding [tool_results_pass_to_model Not working](#tool_results_pass_to_model-not-working), it now works with "system" message prepended to "user" message.
 
@@ -137,6 +137,104 @@ RESPONSE:
     "completion_tokens": 13,
     "total_tokens": 506
   }
+}
+```
+
+### tool_results_pass_to_model Working except for mixtral model
+
+Note that mixtral model is still not working. Even with the system message, it behaves the same in that it keeps making tool calls, does not integrate tool responses into a message to the human. See example below. Note changing temperature from 1 to 0 did not make a difference, nor did several tweeks to "system" message.
+
+```
+{
+    "messages": [
+        {
+            "content": "You are a helpful assistant that can access external tool functions without asking the human user. The responses from these function calls will be appended to this dialogue as a message from \"tool\". Using these tool responses, Please provide responses to the human user based on the information from these function calls.",
+            "role": "system"
+        },
+        {
+            "content": "What is the weather in SF?\n\n",
+            "role": "user"
+        },
+        {
+            "content": null,
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "type": "function",
+                    "id": "call_sbrwbw8uog5569mwcws1vdog",
+                    "function": {
+                        "name": "get_weather",
+                        "arguments": "{\"location\": \"SF\"}"
+                    }
+                }
+            ]
+        },
+        {
+            "content": "It's 60 degrees and foggy in SF.",
+            "role": "tool",
+            "tool_call_id": "call_sbrwbw8uog5569mwcws1vdog"
+        },
+        {
+            "content": null,
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "type": "function",
+                    "id": "call_1xs5e0w82oq5ucjsvvnyg5hp",
+                    "function": {
+                        "name": "get_weather",
+                        "arguments": "{\"location\": \"SF\"}"
+                    }
+                }
+            ]
+        },
+        {
+            "content": "It's 60 degrees and foggy in SF.",
+            "role": "tool",
+            "tool_call_id": "call_1xs5e0w82oq5ucjsvvnyg5hp"
+        }
+    ],
+    "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "max_tokens": 512,
+    "stop": [
+        "</s>",
+        "[INST]",
+        "[/INST]"
+    ],
+    "stream": false,
+    "temperature": 0,
+    "tools": [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_weather",
+                "description": "Call to get the current weather.",
+                "parameters": {
+                    "properties": {
+                        "location": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "location"
+                    ],
+                    "type": "object"
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "get_coolest_cities",
+                "description": "Get a list of coolest cities",
+                "parameters": {
+                    "properties": {},
+                    "type": "object"
+                }
+            }
+        }
+    ],
+    "top_p": 0.9
 }
 ```
 

@@ -13,6 +13,7 @@ from services.chat_history import ChatHistoryManager
 from utils import warn, error, success, dbg_important
 
 
+# Mixtral 8x7B was deprecated 2024/11/30 according to https://docs.mistral.ai/getting-started/models/models_overview/
 TOGETHERAI_MIXTRAL_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 TOGETHERAI_LLAMA3_405B_MODEL = "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
 MIXTRAL_STOPS = ["</s>", "[INST]", "[/INST]"]
@@ -23,8 +24,8 @@ class ChatModelService:
         self.api_key = api_key
         self._mixtral_model = None
         self._llama_model = None
-        #self.chat_llm_no_tools = self.mixtral_model()
-        self.chat_llm_no_tools = self.llama_model()
+        self.chat_llm_no_tools = self.mixtral_model()
+        #  self.chat_llm_no_tools = self.llama_model()
         self.tool_manager = ToolManager()
         dbg_important(f"CHAD: ChatModelService self.chat_llm_no_tools before bind_tools:")
         pprint.pp(self.chat_llm_no_tools)
@@ -49,7 +50,7 @@ class ChatModelService:
                 max_tokens=512,
                 stop=MIXTRAL_STOPS,
                 top_p=0.9,
-                temperature=1.0,
+                temperature=0,
                 callbacks=[MyCustomHandler()],
             )
         return self._mixtral_model
@@ -68,9 +69,9 @@ class ChatModelService:
     
     def get_system_message(self) -> str:
         system_prompt = """
-        You are a helpful assistant that can access external tool functions without asking the user.
-        The responses from these function calls will be appended to this dialogue. 
-        Please provide responses to the user based on the information from these function calls.
+        You are a helpful assistant that can access external tool functions without asking the human user.
+        The responses from these function calls will be appended to this dialogue as a message from "tool". 
+        Using these tool responses, Please provide responses to the human user based on the information from these function calls.
         """
         return ' '.join(system_prompt.split())
 
