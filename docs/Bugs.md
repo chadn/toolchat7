@@ -157,9 +157,9 @@ Feb 23 16:15:44  ToolMessage(content="It's 60 degrees and foggy in SF.", name='g
 Feb 23 16:15:44  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_u7v0m4oa34v7vl7dmjbcy6c2', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 420, 'total_tokens': 434, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-dfb2502d-3e88-476a-814c-a4ddeb7a51d8-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_u7v0m4oa34v7vl7dmjbcy6c2', 'type': 'tool_call'}], usage_metadata={'input_tokens': 420, 'output_tokens': 14, 'total_tokens': 434, 'input_token_details': {}, 'output_token_details': {}})]
 ```
 
-#### Raw JSON request and response for api.together.xyz
+### Raw JSON HTTP request and response using langchain_together
 
-SUMMARY: Confirmed that all messages are sent to `api.together.xyz` and that the `id` and `tool_call_id` are present and matching in the request.
+SUMMARY: Confirmed that all messages are sent to `api.together.xyz` and that the `id` and `tool_call_id` are present and matching in the request. Using `ChatTogether` model from langchain_together.
 
 Using https://github.com/cle-b/httpdbg to capture HTTP info like this:
 
@@ -311,7 +311,30 @@ RESPONSE
 excerpt from stack trace tab in httpdbg
 
 ```
-python3.12/site-packages/openai/resources/chat/completions/completions.py
+File "/Users/chad/src/toolchat7/src/services/chat_model.py", line 93,
+ 93.             response_ai_msg = self.chat_llm.invoke(self.chat_history.messages)
+
+File "/Users/chad/src/toolchat7/.venv/lib/python3.12/site-packages/langchain_core/runnables/base.py", line 5360,
+ 5360.         return self.bound.invoke(
+ 5361.             input,
+ 5362.             self._merge_configs(config),
+ 5363.             **{**self.kwargs, **kwargs},
+ 5364.         )
+
+ ...
+
+ File "/Users/chad/src/toolchat7/.venv/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 925,
+ 925.                 result = self._generate(
+ 926.                     messages, stop=stop, run_manager=run_manager, **kwargs
+ 927.                 )
+
+File "/Users/chad/src/toolchat7/.venv/lib/python3.12/site-packages/langchain_openai/chat_models/base.py", line 783,
+ 783.             response = self.client.create(**payload)
+
+File "/Users/chad/src/toolchat7/.venv/lib/python3.12/site-packages/openai/_utils/_utils.py", line 279,
+ 279.             return func(*args, **kwargs)
+
+File "/Users/chad/src/toolchat7/.venv/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 879,
  879.         return self._post(
  880.             "/chat/completions",
  881.             body=maybe_transform(
@@ -320,4 +343,103 @@ python3.12/site-packages/openai/resources/chat/completions/completions.py
  884.                     "model": model,
  885.                     "audio": audio,
  886.                     "frequency_penalty": frequency_penalty,
+```
+
+### Raw JSON HTTP request and response Together API
+
+Similar to above, but instead of using langchain, using the `together` library directly to send HTTP requests to `api.together.xyz`.
+
+This is included to show that langchain and together package both send HTTP POST requests to the same endpoint, both structure the json request the same way. The main difference is no tool calling on this example.
+
+The code used for this can be viewed at [together-ai-api tag](https://github.com/chadn/toolchat7/tree/together-ai-api).
+
+HTTP POST Headers to Together API
+
+```
+https://api.together.xyz/v1/chat/completions
+User-Agent: Together/v1 PythonBindings/1.4.1
+X-Together-Client-User-Agent: {"bindings_version": "1.4.1", "httplib": "requests", "lang": "python", "lang_version": "3.12.8", "platform": "macOS-15.3.1-arm64-arm-64bit", "publisher": "together", "uname": "Darwin 24.3.0 Darwin Kernel Version 24.3.0: Thu Jan 2 20:24:16 PST 2025; root:xnu-11215.81.4~3/RELEASE_ARM64_T6000 arm64 arm"}
+
+status: 200 OK
+start: 2025-02-24T15:53:34.231278+00:00
+end:    2025-02-24T15:53:37.375537+00:00
+```
+
+REQUEST
+
+```
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "What is the weather in SF?\n\n"
+        },
+        {
+            "role": "assistant",
+            "content": "However, I'm a large language model, I don't have real-time access to current weather conditions. But I can suggest some ways for you to find out the current weather in San Francisco.\n\n1. Check online weather websites: You can check websites like AccuWeather, Weather.com, or the National Weather Service (NWS) for the current weather conditions in San Francisco.\n2. Use a mobile app: You can download mobile apps like Dark Sky, Weather Underground, or The Weather Channel to get the current weather conditions in San Francisco.\n3. Check social media: You can also check the social media accounts of local news stations or weather services in San Francisco to get updates on the current weather conditions.\n\nPlease note that the weather in San Francisco can be quite unpredictable and can change quickly, so it's always a good idea to check multiple sources for the most up-to-date information.\n\nIf you're looking for general information about the weather in San Francisco, I can tell you that the city has a Mediterranean climate with cool, wet winters and mild, dry summers. The average temperature in San Francisco ranges from 45°F (7°C) in January (the coldest month) to 67°F (19°C) in September (the warmest month)."
+        },
+        {
+            "role": "user",
+            "content": "What is cooler, SF or LA?\n"
+        }
+    ],
+    "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+    "max_tokens": 1024,
+    "temperature": 0,
+    "stream": false
+}
+```
+
+RESPONSE
+
+```
+{
+  "id": "9170a1152f2febe9",
+  "object": "chat.completion",
+  "created": 1740412414,
+  "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+  "prompt": [],
+  "choices": [
+    {
+      "finish_reason": "eos",
+      "seed": 4230294806757981,
+      "logprobs": null,
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "San Francisco (SF) is generally cooler than Los Angeles (LA). San Francisco's climate is influenced by its proximity to the Pacific Ocean and the cool California Current, which keeps temperatures relatively mild and cool throughout the year.\n\nIn contrast, Los Angeles has a Mediterranean climate with warmer temperatures, especially during the summer months. LA's inland location and distance from the ocean contribute to its warmer temperatures.\n\nHere's a rough comparison of the average temperatures in SF and LA:\n\n* Summer (June to August):\n\t+ SF: Highs around 67-73°F (19-23°C), lows around 54-58°F (12-14°C)\n\t+ LA: Highs around 84-90°F (29-32°C), lows around 63-66°F (17-19°C)\n* Winter (December to February):\n\t+ SF: Highs around 58-62°F (14-17°C), lows around 45-50°F (7-10°C)\n\t+ LA: Highs around 68-72°F (20-22°C), lows around 48-52°F (9-11°C)\n\nOverall, San Francisco tends to be cooler than Los Angeles, especially during the summer months. However, both cities can experience temperature fluctuations, and microclimates within each city can vary significantly.",
+        "tool_calls": []
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 313,
+    "completion_tokens": 269,
+    "total_tokens": 582
+  }
+}
+```
+
+Stack trace excerpt from httpdbg:
+
+```
+File "/Users/chad/src/toolchat7/src/services/chat_model.py", line 24,
+ 24.         response = self.together.chat.completions.create(
+ 25.             model=model or self.default_model,
+ 26.             messages=[
+ 27.                 {"role": m["role"], "content": m["content"]}
+ 28.                 for m in messages
+ 29.             ],
+ 30.             max_tokens=max_tokens,
+ 31.             temperature=temperature,
+
+File "/Users/chad/src/toolchat7/.venv/lib/python3.12/site-packages/together/resources/chat/completions.py", line 141,
+ 141.         response, _, _ = requestor.request(
+ 142.             options=TogetherRequest(
+ 143.                 method="POST",
+ 144.                 url="chat/completions",
+ 145.                 params=parameter_payload,
+ 146.             ),
+ 147.             stream=stream,
+ 148.         )
 ```
