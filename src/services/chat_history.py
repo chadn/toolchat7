@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import json
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, ToolMessage, SystemMessage
 
 class ChatHistoryManager(StreamlitChatMessageHistory):
     def __init__(self):
@@ -22,6 +22,9 @@ class ChatHistoryManager(StreamlitChatMessageHistory):
 
     def add_tool_message(self, toolmsg: ToolMessage) -> None:
         self.add_message(toolmsg)
+
+    def add_system_message(self, content: str) -> None:
+        self.add_message(SystemMessage(content=content))
 
     def append_message(self, message: Dict[str, str]) -> None:
         """Append a message to the chat history.
@@ -52,7 +55,7 @@ class ChatHistoryManager(StreamlitChatMessageHistory):
     def get_just_ai_human_message(self) -> List[BaseMessage]:
         """
         Get all  AI or Human messages from the chat history.
-        Skip tool messages and any messages without content.
+        Skip system, tool, and any messages without content.
 
         Returns:
             List[BaseMessage]: A list of BaseMessage objects

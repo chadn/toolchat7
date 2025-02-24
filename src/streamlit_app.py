@@ -23,6 +23,8 @@ def dbg(msg):
 
 def init_session_state() -> None:
     """Initialize session state variables."""
+    if "initialized" in st.session_state:
+        return
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = ChatHistoryManager()
     if "dbg_print" not in st.session_state:
@@ -35,9 +37,9 @@ def init_session_state() -> None:
     # (chains, models, agents, tools, retrievers) to print the inputs they receive and outputs 
     # they generate. This is the most verbose setting and will fully log raw inputs and outputs.
     set_debug(os.getenv('LANGCHAIN_DEBUG', default=False))
-
-
+    st.session_state.initialized = True
     dbg(f"DEBUG_PRINT set to {st.session_state.dbg_print} session state initialized")
+
 
 def setup_page() -> None:
     st.title("💬 Tool Chat 7 ")
@@ -154,7 +156,6 @@ def handle_user_input(chat_model: ChatModelService) -> None:
         chat_model: Initialized chat model service
     """
 
-
     if prompt := st.chat_input("What can I answer for you today?"):
         # Add user message
         st.session_state.chat_history.add_human_message(prompt)
@@ -162,6 +163,7 @@ def handle_user_input(chat_model: ChatModelService) -> None:
         # Generate and display response
         try:
             st.session_state.chat_model.generate_response_langchain()
+            dbg(f"CHAD: generate_response_langchain returned")
             render_message(st.session_state.chat_history.messages[-1])
         except Exception as e:
             print(f"CHAD: generate_response_langchain failed. {type(e)} Exception:\n{e}\n{repr(e)}\n")

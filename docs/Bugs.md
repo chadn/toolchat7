@@ -2,6 +2,144 @@
 
 Noting bugs here that currently exist in code.
 
+## tool_results_pass_to_model Working
+
+UPDATE: Regarding [tool_results_pass_to_model Not working](#tool_results_pass_to_model-not-working), it now works with "system" message prepended to "user" message.
+
+Example
+
+```
+POST https://api.together.xyz/v1/chat/completions
+User-Agent: OpenAI/Python 1.63.2
+
+{
+  "messages": [
+    {
+      "content": "You are a helpful assistant that can access external tool functions without asking the user. The responses from these function calls will be appended to this dialogue. Please provide responses to the user based on the information from these function calls.",
+      "role": "system"
+    },
+    {
+      "content": "What is the weather in SF?\n\n",
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_ohpubrlq0zay31qnh8nws4r5",
+          "function": {
+            "name": "get_weather",
+            "arguments": "{\"location\": \"SF\"}"
+          }
+        }
+      ]
+    },
+    {
+      "content": "It's 60 degrees and foggy in SF.",
+      "role": "tool",
+      "tool_call_id": "call_ohpubrlq0zay31qnh8nws4r5"
+    },
+    {
+      "content": "The current weather in SF is 60 degrees and foggy.",
+      "role": "assistant"
+    },
+    {
+      "content": "What is the weather in LA?",
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_pwdj3nepbbpuibyg8h8ni4l1",
+          "function": {
+            "name": "get_weather",
+            "arguments": "{\"location\": \"LA\"}"
+          }
+        }
+      ]
+    },
+    {
+      "content": "It's 90 degrees and sunny in LA.",
+      "role": "tool",
+      "tool_call_id": "call_pwdj3nepbbpuibyg8h8ni4l1"
+    }
+  ],
+  "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+  "max_tokens": 1024,
+  "stop": [
+    "<|eot_id|>"
+  ],
+  "stream": false,
+  "temperature": 0.0,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Call to get the current weather.",
+        "parameters": {
+          "properties": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "location"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "get_coolest_cities",
+        "description": "Get a list of coolest cities",
+        "parameters": {
+          "properties": {},
+          "type": "object"
+        }
+      }
+    }
+  ]
+}
+```
+
+RESPONSE:
+
+```
+{
+  "id": "91716b7a3aab15b6",
+  "object": "chat.completion",
+  "created": 1740420704,
+  "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+  "prompt": [],
+  "choices": [
+    {
+      "finish_reason": "eos",
+      "seed": 7388066728217878000,
+      "logprobs": null,
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "The current weather in LA is 90 degrees and sunny.",
+        "tool_calls": []
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 493,
+    "completion_tokens": 13,
+    "total_tokens": 506
+  }
+}
+```
+
 ## tool_results_pass_to_model Not working
 
 Summary: Model is not getting tool responses correctly, making tool calls seem to be ignored.
@@ -351,7 +489,7 @@ Similar to above, but instead of using langchain, using the `together` library d
 
 This is included to show that langchain and together package both send HTTP POST requests to the same endpoint, both structure the json request the same way. The main difference is no tool calling on this example.
 
-The code used for this can be viewed at [together-ai-api tag](https://github.com/chadn/toolchat7/tree/together-ai-api).
+The code used for this can be viewed at [together-ai-api tag](https://github.com/chadn/toolchat7/blob/together-ai-api/src/services/chat_model.py).
 
 HTTP POST Headers to Together API
 

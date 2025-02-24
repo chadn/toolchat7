@@ -65,9 +65,22 @@ class ChatModelService:
                 callbacks=[MyCustomHandler()],
             )
         return self._llama_model
+    
+    def get_system_message(self) -> str:
+        system_prompt = """
+        You are a helpful assistant that can access external tool functions without asking the user.
+        The responses from these function calls will be appended to this dialogue. 
+        Please provide responses to the user based on the information from these function calls.
+        """
+        return ' '.join(system_prompt.split())
 
-    def set_chat_history(self, chat_history: ChatHistoryManager):
+
+    def set_chat_history(self, chat_history: ChatHistoryManager, skip_system_message: bool = False):
         self.chat_history = chat_history
+        if not skip_system_message:
+            # should we check to see if a system message already exists? No, trust the boolean.
+            self.chat_history.add_system_message(self.get_system_message())
+
 
     def generate_response_langchain(self, content: str = None) -> str:
         """Generate a chat response using the Langchain API.
