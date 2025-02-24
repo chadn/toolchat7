@@ -24,8 +24,8 @@ class ChatModelService:
         self.api_key = api_key
         self._mixtral_model = None
         self._llama_model = None
-        self.chat_llm_no_tools = self.mixtral_model()
-        #  self.chat_llm_no_tools = self.llama_model()
+        #self.chat_llm_no_tools = self.mixtral_model()
+        self.chat_llm_no_tools = self.llama_model()
         self.tool_manager = ToolManager()
         dbg_important(f"CHAD: ChatModelService self.chat_llm_no_tools before bind_tools:")
         pprint.pp(self.chat_llm_no_tools)
