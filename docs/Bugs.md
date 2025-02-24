@@ -144,15 +144,180 @@ Feb 21 12:53:43  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 
 This example has the same behaviour as Example 2. The only difference is this is using `Llama-3.1-405B` instead of `Mixtral-8x7B`.
 
 ```
-Feb 21 15:19:06 ChatTogether(callbacks=[<services.chat_model.MyCustomHandler object at 0x10e3854f0>], client=<openai.resources.chat.completions.completions.Completions object at 0x10e434e60>, async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x10e436990>, model_name='meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', temperature=0.0, model_kwargs={}, max_tokens=1024, stop=['<|eot_id|>'], together_api_key=SecretStr('**********'), together_api_base='https://api.together.xyz/v1/')
+Feb 23 16:15:30 ChatTogether(callbacks=[<services.chat_model.MyCustomHandler object at 0x1123d4920>], client=<openai.resources.chat.completions.completions.Completions object at 0x1124b9430>, async_client=<openai.resources.chat.completions.completions.AsyncCompletions object at 0x1124baf00>, model_name='meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', temperature=0.0, model_kwargs={}, max_tokens=1024, stop=['<|eot_id|>'], together_api_key=SecretStr('**********'), together_api_base='https://api.together.xyz/v1/')
 
-Feb 21 15:19:23 CHAD: generate_response_langchain 8 chat_history.messages:
-Feb 21 15:19:23 [HumanMessage(content='What is the weather in SF?\n\n', additional_kwargs={}, response_metadata={}),
-Feb 21 15:19:23  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_5cngzlncqauxffjclwkelkht', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 340, 'total_tokens': 354, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-477751aa-02d2-4d8c-95a4-cd8c8b29247c-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_5cngzlncqauxffjclwkelkht', 'type': 'tool_call'}], usage_metadata={'input_tokens': 340, 'output_tokens': 14, 'total_tokens': 354, 'input_token_details': {}, 'output_token_details': {}}),
-Feb 21 15:19:23  ToolMessage(content="It's 60 degrees and foggy in SF.", name='get_weather', tool_call_id='call_5cngzlncqauxffjclwkelkht'),
-Feb 21 15:19:23  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_twzl714f4uiyl8m9p65gzrv6', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 380, 'total_tokens': 394, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-cf62ad3f-0414-4be1-a306-b43e9de76152-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_twzl714f4uiyl8m9p65gzrv6', 'type': 'tool_call'}], usage_metadata={'input_tokens': 380, 'output_tokens': 14, 'total_tokens': 394, 'input_token_details': {}, 'output_token_details': {}}),
-Feb 21 15:19:23  ToolMessage(content="It's 60 degrees and foggy in SF.", name='get_weather', tool_call_id='call_twzl714f4uiyl8m9p65gzrv6'),
-Feb 21 15:19:23  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_ha9dbvnedv4gfbv241apcm1s', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 420, 'total_tokens': 434, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-7cf68236-b1aa-4101-8c3d-76d9e06a296c-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_ha9dbvnedv4gfbv241apcm1s', 'type': 'tool_call'}], usage_metadata={'input_tokens': 420, 'output_tokens': 14, 'total_tokens': 434, 'input_token_details': {}, 'output_token_details': {}}),
-Feb 21 15:19:23  ToolMessage(content="It's 60 degrees and foggy in SF.", name='get_weather', tool_call_id='call_ha9dbvnedv4gfbv241apcm1s'),
-Feb 21 15:19:23  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_ha9dbvnedv4gfbv241apcm1s', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 420, 'total_tokens': 434, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-7cf68236-b1aa-4101-8c3d-76d9e06a296c-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_ha9dbvnedv4gfbv241apcm1s', 'type': 'tool_call'}], usage_metadata={'input_tokens': 420, 'output_tokens': 14, 'total_tokens': 434, 'input_token_details': {}, 'output_token_details': {}})]
+Feb 23 16:15:44 CHAD: generate_response_langchain 8 chat_history.messages:
+Feb 23 16:15:44 [HumanMessage(content='What is the weather in SF?\n\n', additional_kwargs={}, response_metadata={}),
+Feb 23 16:15:44  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_fus0ucjka7nv5027jwy4hmd2', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 340, 'total_tokens': 354, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-af527fcb-1ebf-45d1-aea9-4fb34af9fd64-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_fus0ucjka7nv5027jwy4hmd2', 'type': 'tool_call'}], usage_metadata={'input_tokens': 340, 'output_tokens': 14, 'total_tokens': 354, 'input_token_details': {}, 'output_token_details': {}}),
+Feb 23 16:15:44  ToolMessage(content="It's 60 degrees and foggy in SF.", name='get_weather', tool_call_id='call_fus0ucjka7nv5027jwy4hmd2'),
+Feb 23 16:15:44  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_5eu6lqlc4udcka70p0ty2pkt', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 380, 'total_tokens': 394, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-e302b4fd-2ccd-4640-b505-a5cd88609ee5-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_5eu6lqlc4udcka70p0ty2pkt', 'type': 'tool_call'}], usage_metadata={'input_tokens': 380, 'output_tokens': 14, 'total_tokens': 394, 'input_token_details': {}, 'output_token_details': {}}),
+Feb 23 16:15:44  ToolMessage(content="It's 60 degrees and foggy in SF.", name='get_weather', tool_call_id='call_5eu6lqlc4udcka70p0ty2pkt'),
+Feb 23 16:15:44  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_u7v0m4oa34v7vl7dmjbcy6c2', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 420, 'total_tokens': 434, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-dfb2502d-3e88-476a-814c-a4ddeb7a51d8-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_u7v0m4oa34v7vl7dmjbcy6c2', 'type': 'tool_call'}], usage_metadata={'input_tokens': 420, 'output_tokens': 14, 'total_tokens': 434, 'input_token_details': {}, 'output_token_details': {}}),
+Feb 23 16:15:44  ToolMessage(content="It's 60 degrees and foggy in SF.", name='get_weather', tool_call_id='call_u7v0m4oa34v7vl7dmjbcy6c2'),
+Feb 23 16:15:44  AIMessage(content='', additional_kwargs={'tool_calls': [{'id': 'call_u7v0m4oa34v7vl7dmjbcy6c2', 'function': {'arguments': '{"location":"SF"}', 'name': 'get_weather'}, 'type': 'function', 'index': 0}], 'refusal': None}, response_metadata={'token_usage': {'completion_tokens': 14, 'prompt_tokens': 420, 'total_tokens': 434, 'completion_tokens_details': None, 'prompt_tokens_details': None}, 'model_name': 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo', 'system_fingerprint': None, 'finish_reason': 'tool_calls', 'logprobs': None}, id='run-dfb2502d-3e88-476a-814c-a4ddeb7a51d8-0', tool_calls=[{'name': 'get_weather', 'args': {'location': 'SF'}, 'id': 'call_u7v0m4oa34v7vl7dmjbcy6c2', 'type': 'tool_call'}], usage_metadata={'input_tokens': 420, 'output_tokens': 14, 'total_tokens': 434, 'input_token_details': {}, 'output_token_details': {}})]
+```
+
+#### Raw JSON request and response for api.together.xyz
+
+SUMMARY: Confirmed that all messages are sent to `api.together.xyz` and that the `id` and `tool_call_id` are present and matching in the request.
+
+Using https://github.com/cle-b/httpdbg to capture HTTP info like this:
+
+```
+pyhttpdbg -m streamlit.web.cli run src/streamlit_app.py 2>&1 |ts |tee -a src/streamlit_app.py.log
+```
+
+Was able to get the following info from http://localhost:4909/
+
+```
+POST https://api.together.xyz/v1/chat/completions
+User-Agent: OpenAI/Python 1.63.2
+Authorization: Bearer <TOGETHER_API_KEY>
+
+status: 200 OK
+start: 2025-02-24T00:15:43.588246+00:00
+end:    2025-02-24T00:15:44.688619+00:00
+```
+
+REQUEST
+
+```
+{
+  "messages": [
+    {
+      "content": "What is the weather in SF?\n\n",
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_fus0ucjka7nv5027jwy4hmd2",
+          "function": {
+            "name": "get_weather",
+            "arguments": "{\"location\": \"SF\"}"
+          }
+        }
+      ]
+    },
+    {
+      "content": "It's 60 degrees and foggy in SF.",
+      "role": "tool",
+      "tool_call_id": "call_fus0ucjka7nv5027jwy4hmd2"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_5eu6lqlc4udcka70p0ty2pkt",
+          "function": {
+            "name": "get_weather",
+            "arguments": "{\"location\": \"SF\"}"
+          }
+        }
+      ]
+    },
+    {
+      "content": "It's 60 degrees and foggy in SF.",
+      "role": "tool",
+      "tool_call_id": "call_5eu6lqlc4udcka70p0ty2pkt"
+    }
+  ],
+  "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+  "max_tokens": 1024,
+  "stop": [
+    "<|eot_id|>"
+  ],
+  "stream": false,
+  "temperature": 0.0,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "Call to get the current weather.",
+        "parameters": {
+          "properties": {
+            "location": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "location"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "get_coolest_cities",
+        "description": "Get a list of coolest cities",
+        "parameters": {
+          "properties": {},
+          "type": "object"
+        }
+      }
+    }
+  ]
+}
+```
+
+RESPONSE
+
+```
+{
+  "id": "916b43499ebd251d",
+  "object": "chat.completion",
+  "created": 1740356143,
+  "model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+  "prompt": [],
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "seed": 11975339150697850000,
+      "logprobs": null,
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "index": 0,
+            "id": "call_u7v0m4oa34v7vl7dmjbcy6c2",
+            "type": "function",
+            "function": {
+              "arguments": "{\"location\":\"SF\"}",
+              "name": "get_weather"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 420,
+    "completion_tokens": 14,
+    "total_tokens": 434
+  }
+}
+```
+
+excerpt from stack trace tab in httpdbg
+
+```
+python3.12/site-packages/openai/resources/chat/completions/completions.py
+ 879.         return self._post(
+ 880.             "/chat/completions",
+ 881.             body=maybe_transform(
+ 882.                 {
+ 883.                     "messages": messages,
+ 884.                     "model": model,
+ 885.                     "audio": audio,
+ 886.                     "frequency_penalty": frequency_penalty,
 ```
