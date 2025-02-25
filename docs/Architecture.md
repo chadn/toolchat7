@@ -91,7 +91,7 @@ https://python.langchain.com/docs/how_to/tool_results_pass_to_model/
 
 ## Models That Support Tool Calling
 
-For Tool calling to work, it needs to be supported by Lanchain, a Provider, and the Model.
+For Tool calling to work, it needs to be supported by Langchain, a Provider, and the Model.
 
 ### Tool Support in Langchain
 
@@ -128,3 +128,74 @@ Qwen/Qwen2.5-72B-Instruct-Turbo
 The noteworthy difference between Native Function Calling and regular Function Calling (Tool Calling) is that Native Function Calling requires communicating tool schema as part of the custom prompt.
 
 Regular Function Calling (Tool Calling) still works (just as good - to be confirmed) and is supported by more models,
+
+# Models
+
+## LLM model Llama 3.3 70B
+
+The `Llama-3.3-70B` model is the best performer for the cost as of 2025 Q1.
+
+> Llama 3.3: 70B
+> • State-of-the-art multilingual open source large language model
+> • Experience 405B performance and quality at a fraction of the cost
+> https://www.llama.com/llama-downloads/
+
+> If you're not sure which chat model to use, we currently recommend Llama 3.3 70B Turbo `meta-llama/Llama-3.3-70B-Instruct-Turbo` to get started.
+> https://docs.together.ai/docs/serverless-models
+
+## LLM model Llama-3.1-405B
+
+`Llama-3.1-405B` was a great performer in 2024, but not worth the extra price when compared to `Llama-3.3-70B`.
+
+## LLM model Mixtral-8x7B
+
+`Mixtral-8x7B` was great in 2024 but is deprecated as of 2024/11/30 according to https://docs.mistral.ai/getting-started/models/models_overview/
+
+## Together Pricing For models
+
+To see all models supported by Together.ai, see https://docs.together.ai/docs/serverless-models
+Get latest pricing details from the API at `https://api.together.xyz/v1/models` like so:
+
+```
+curl --request GET \
+     --url https://api.together.xyz/v1/models \
+     --header 'accept: application/json' \
+     --header 'authorization: Bearer <TOGETHER_API_KEY>' \
+    > together-models.json
+
+# sort json for easier git diff - first sort all objects by keys, then sort all arrays by values, then sort top level objects by id
+cat together-models.json|jq -S 'walk(if type == "array" then sort else . end)' |jq 'sort_by(.id)'>together-models.sorted.json
+```
+
+And from [together-models.sorted.json](together-models.sorted.json) can see the pricing details for each model.
+
+Looking at the excerpt below, can see that the `Llama-3.3-70B` model is about 1/4 the prices of `Llama-3.1-405B`, and only 15% more than `Mixtral-8x7B`.
+
+```
+    "id": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+    "pricing": {
+      "base": 0,
+      "finetune": 0,
+      "hourly": 0,
+      "input": 0.88,
+      "output": 0.88
+    },
+
+    "id": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+    "pricing": {
+      "base": 0,
+      "finetune": 0,
+      "hourly": 0,
+      "input": 3.5,
+      "output": 3.5
+    },
+
+    "id": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "pricing": {
+      "base": 0,
+      "finetune": 0,
+      "hourly": 0,
+      "input": 0.6,
+      "output": 0.6
+    },
+```

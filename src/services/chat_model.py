@@ -16,34 +16,30 @@ from utils import warn, error, success, dbg_important
 # Mixtral 8x7B was deprecated 2024/11/30 according to https://docs.mistral.ai/getting-started/models/models_overview/
 TOGETHERAI_MIXTRAL_MODEL = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 TOGETHERAI_LLAMA3_405B_MODEL = "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo"
+TOGETHERAI_LLAMA33_70B_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 MIXTRAL_STOPS = ["</s>", "[INST]", "[/INST]"]
 LLAMA3_STOPS = ["<|eot_id|>"]
 
 class ChatModelService:
     def __init__(self, api_key: str):
         self.api_key = api_key
-        self._mixtral_model = None
-        self._llama_model = None
         #self.chat_llm_no_tools = self.mixtral_model()
-        self.chat_llm_no_tools = self.llama_model()
-        self.tool_manager = ToolManager()
-        dbg_important(f"CHAD: ChatModelService self.chat_llm_no_tools before bind_tools:")
-        pprint.pp(self.chat_llm_no_tools)
+        #self.chat_llm_no_tools = self.llama_model_405b()
         try:
+            self.chat_llm_no_tools = self.llama_model_70b()
+            self.tool_manager = ToolManager()
+            dbg_important(f"CHAD: ChatModelService self.chat_llm_no_tools before bind_tools: {self.chat_llm_no_tools}")
             self.chat_llm = self.chat_llm_no_tools.bind_tools(self.tool_manager.working_tools)
             success(f"CHAD: ChatModelService bind_tools() SUCCESS! tools={self.tool_manager.working_tools}\n")
         except Exception as e:
-            error(f"CHAD: ChatModelService bind_tools() failed", f"{type(e)} Exception:\n{e}\n{repr(e)}\n")
-            warn(f"CHAD: ChatModelService self.chat_llm_no_tools:")
-            pprint.pp(self.chat_llm_no_tools)
-            warn(f"CHAD: ChatModelService traceback:")
-            print(traceback.format_exc())
+            error(f"CHAD: ChatModelService: {type(e)} Exception:\n{e}\n{repr(e)}\n")
+            error(traceback.format_exc())
             print("\n\n")
             raise e
 
 
     def mixtral_model(self) -> ChatTogether:
-        if not self._mixtral_model:        
+        if not '_mixtral_model' in self.__dict__:      
             self._mixtral_model = ChatTogether(
                 model=TOGETHERAI_MIXTRAL_MODEL,
                 together_api_key=self.api_key,
@@ -55,9 +51,9 @@ class ChatModelService:
             )
         return self._mixtral_model
 
-    def llama_model(self) -> ChatTogether:
-        if not self._llama_model:        
-            self._llama_model = ChatTogether(
+    def llama_model_405b(self) -> ChatTogether:
+        if not '_llama_model_405b' in self.__dict__:      
+            self._llama_model_405b = ChatTogether(
                 model=TOGETHERAI_LLAMA3_405B_MODEL,
                 together_api_key=self.api_key,
                 max_tokens=1024,
@@ -65,8 +61,20 @@ class ChatModelService:
                 temperature=0,
                 callbacks=[MyCustomHandler()],
             )
-        return self._llama_model
-    
+        return self._llama_model_405b
+
+    def llama_model_70b(self) -> ChatTogether:
+        if not '_llama_model_70b' in self.__dict__:        
+            self._llama_model_70b = ChatTogether(
+                model=TOGETHERAI_LLAMA33_70B_MODEL,
+                together_api_key=self.api_key,
+                max_tokens=1024,
+                stop=LLAMA3_STOPS,
+                temperature=0,
+                callbacks=[MyCustomHandler()],
+            )
+        return self._llama_model_70b
+
     def get_system_message(self) -> str:
         system_prompt = """
         You are a helpful assistant that can access external tool functions without asking the human user.
