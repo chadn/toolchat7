@@ -27,3 +27,27 @@ Homepage = "https://toolchat7.streamlit.app"
 Repository = "https://github.com/chadn/toolchat7.git"
 
 
+# Below from:
+# https://gist.github.com/GhostofGoes/75051c4aeb215bc3cf48c10f5454b399
+#
+# Development dependencies
+# uv pip install -e .[dev]
+# uv pip install -e .[lint,test,exe]
+[project.optional-dependencies]
+lint = [
+    # ruff linter checks for issues and potential bugs
+    "ruff",
+
+    # automatic code formatting to follow a consistent style
+    "black",
+]
+
+dev = [
+    # Can use https://github.com/cle-b/httpdbg to run streamlit python app
+    "httpdbg",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = 'py312'
+

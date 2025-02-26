@@ -1,18 +1,19 @@
 # 💬 Tool Chat 7
 
-A Streamlit-based chatbot application that uses Together AI's language models and supports tool calling.
+A Streamlit-based chatbot application that uses the Langchain Framework to interact with Together AI's language models and supports tool calling.
 
 Demo the code in this repo here: https://toolchat7.streamlit.app/
 
 ## Features
 
--   Chat interface with Together AI models
--   Chat history management
--   Export/Import chat history as JSON
--   Configurable model parameters
--   Debug print option
+-   Chat interface with Together AI models (Llama 3.3 70B)
+-   Uses Langchain Framework which enables easy support for Tool Calling and Together AI API.
+-   Tool calling support for custom functions
+-   Chat history management with JSON export/import
+-   Debug print option with logging configuration
+-   Streamlit-based web interface
 
-Also see [Architecture.md](docs/Architecture.md), [TODO.md](docs/TODO.md), and [Bugs.md](docs/Bugs.md)
+Also see [Architecture.md](docs/Architecture.md), [TODO.md](docs/TODO.md), [Bugs.md](docs/Bugs.md) and more in [docs/](docs/).
 
 ## Setup
 
@@ -44,6 +45,20 @@ You can add timestamps and log to a file when debugging like this:
 streamlit run src/streamlit_app.py 2>&1 |ts |tee -a src/streamlit_app.py.log
 ```
 
+## Development
+
+Install development dependencies:
+
+```
+# uv pip install -e .[dev]
+```
+
+Run the app with [httpdbg](https://github.com/cle-b/httpdbg) to capture HTTP requests and responses:
+
+```bash
+pyhttpdbg -m streamlit.web.cli run src/streamlit_app.py 2>&1 |ts |tee -a src/streamlit_app.py.log
+```
+
 ## Running Tests
 
 Run all tests:
@@ -66,12 +81,14 @@ pytest tests/ -m integration
 │   └── devcontainer.json    # Configuration for development container
 ├── docs/
 │   ├── Architecture.md       # System architecture documentation
+│   ├── Bugs.md              # Known issues and their status
 │   └── TODO.md               # Project tasks and plans
 ├── src/
 │   ├── streamlit_app.py      # Main Streamlit application
 │   ├── services/
 │   │   ├── chat_history.py   # Chat history management
-│   │   └── chat_model.py     # Together AI chat model integration
+│   │   ├── chat_model.py     # Together AI chat model integration
+│   │   └── tool_manager.py   # Tool calling functionality
 │   └── utils/
 ├── tests/
 │   ├── test_chat_history.py  # Unit tests for chat history management
@@ -93,11 +110,15 @@ The application is structured into several key components:
 
 -   `ChatModelService`: Handles interactions with Together AI's API
 -   `ChatHistoryManager`: Manages chat history and persistence
+-   `ToolManager`: Handles tool calling functionality
 -   Streamlit UI: Provides the user interface and interaction flow
 
 ## Environment Variables
 
 -   `TOGETHER_API_KEY`: Your Together AI API key
 -   `DEBUG_PRINT`: Enable/disable debug printing (True/False)
+-   `LANGCHAIN_VERBOSE`: Enable/disable Langchain verbose mode
+-   `LANGCHAIN_DEBUG`: Enable/disable Langchain debug mode
+-   `LOG_PROMPTS`: Enable/disable prompt logging
 
 [Apache License 2.0](LICENSE)
