@@ -1,10 +1,12 @@
 [project]
 name = "toolchat7"
-version = "0.1.0"
+version = "0.1.1"
 description = "Streamlit chatbot with tool calling, uses custom APIs."
 keywords = ["chatbot", "streamlit", "together-ai", "langchain", "tool-calling"]
 readme = "README.md"
 requires-python = ">=3.12"
+
+# When updating dependencies, also do `uv lock` and git commit uv.lock 
 dependencies = [
     "langchain>=0.3,<0.4",
     "langchain-community>=0.3,<0.4",

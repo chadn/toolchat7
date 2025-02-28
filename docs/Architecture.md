@@ -154,13 +154,13 @@ The `Llama-3.3-70B` model is the best performer for the cost as of 2025 Q1.
 ## Together Pricing For models
 
 To see all models supported by Together.ai, see https://docs.together.ai/docs/serverless-models
-Get latest pricing details from the API at `https://api.together.xyz/v1/models` like so:
+Get latest pricing details from the [models API](https://docs.together.ai/reference/models-1) like so:
 
 ```
 curl --request GET \
      --url https://api.together.xyz/v1/models \
      --header 'accept: application/json' \
-     --header 'authorization: Bearer <TOGETHER_API_KEY>' \
+     --header 'authorization: Bearer 2db85fe113458268ae1100b50173efde43b917e87cd64fed009d8d3d8435860c' \
     > together-models.json
 
 # sort json for easier git diff - first sort all objects by keys, then sort all arrays by values, then sort top level objects by id

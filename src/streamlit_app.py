@@ -42,6 +42,7 @@ def init_session_state() -> None:
 
 
 def setup_page() -> None:
+    st.set_page_config(page_title="Tool Chat 7", page_icon="🐦")
     st.title("💬 Tool Chat 7 ")
     st.write("This is a simple chatbot that uses custom tools, or APIs.")
     st.write("What is the weather in SF?")
